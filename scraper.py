@@ -12,18 +12,14 @@ class scraper():
     def get_top_games_by_player_count(self):
         url = 'http://store.steampowered.com/stats/'
         r = requests.get(url)
-        html = r.text
-        soup = BeautifulSoup(html, "lxml")
+        soup = BeautifulSoup(r.text, "lxml")
         links = soup.find_all('a',class_="gameLink")
         for item in links:
             url = item['href']
             game_name = item.get_text().encode('utf-8')
-            # print url, game_name
             m = re.search('app/(\d+)/',url)
             if m:
                 self.game_name_for_appid[m.group(1)] = game_name
-        # for item in self.game_name_for_appid:
-        #     print item, self.game_name_for_appid[item]
 
     def get_reviews_for_appid(self,appid=None,offset=0,type=None):
         if type is None:
@@ -31,15 +27,10 @@ class scraper():
         if appid is None:
             return
         url = 'http://store.steampowered.com/appreviews/%s?start_offset=%i&day_range=180&filter=%s&language=english' % (appid,offset,type)
-        # print url
         r = requests.get(url)
         json = r.json()
         if json.get('success') == 1:
-            # print json
-            # print json['recommendationids']
-            html = json['html']
-            soup = BeautifulSoup(html, "lxml")
-            # print soup.text.encode('utf-8')
+            soup = BeautifulSoup(json['html'], "lxml")
             content = soup.find_all('div',class_="content")
 
             index = 0

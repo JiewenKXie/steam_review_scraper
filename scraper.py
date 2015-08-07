@@ -28,17 +28,24 @@ class scraper():
         if appid is None:
             return
         url = 'http://store.steampowered.com/appreviews/%s?start_offset=%i&day_range=180&filter=%s&language=english' % (appid,offset,type)
-        print url
+        # print url
         r = requests.get(url)
         json = r.json()
         if json.get('success') == 1:
-            print json
+            # print json
+            html = json['html']
+            soup = BeautifulSoup(html, "lxml")
+            # print soup.text.encode('utf-8')
+            content = soup.find_all('div',class_="content")
+            for item in content:
+                print item.get_text(strip=True).encode('utf-8') + "\n"
+
 
 if __name__ == "__main__":
     s = scraper()
     # s.get_top_games_by_player_count()
 
-    s.get_reviews_for_appid('730', 0)
+    s.get_reviews_for_appid('730', 0, 'funny')
 
 
 

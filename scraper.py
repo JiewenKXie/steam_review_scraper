@@ -33,12 +33,17 @@ class scraper():
         json = r.json()
         if json.get('success') == 1:
             # print json
+            print json['recommendationids']
             html = json['html']
             soup = BeautifulSoup(html, "lxml")
             # print soup.text.encode('utf-8')
             content = soup.find_all('div',class_="content")
+
+            index = 0
             for item in content:
-                print item.get_text(strip=True).encode('utf-8') + "\n"
+                review_text = item.get_text(strip=True).replace('\n','|')
+                print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
+                index = index + 1
 
 
 if __name__ == "__main__":
@@ -46,6 +51,7 @@ if __name__ == "__main__":
     # s.get_top_games_by_player_count()
 
     s.get_reviews_for_appid('730', 0, 'funny')
+
 
 
 

@@ -7,6 +7,7 @@ import unicodecsv
 class scraper():
     def __init__(self):
         self.game_name_for_appid = {}
+        self.init_unicodecsv()
 
     def get_top_games_by_player_count(self):
         url = 'http://store.steampowered.com/stats/'
@@ -60,6 +61,7 @@ class scraper():
         self.csv_unicode_writer.writerow(header)
 
     def get_reviews_for_all_games(self,type=None):
+        self.get_top_games_by_player_count()
         if type is None:
             type = 'all'
         count = 1
@@ -70,15 +72,10 @@ class scraper():
 
 if __name__ == "__main__":
     s = scraper()
-    s.get_top_games_by_player_count()
+    # s.get_top_games_by_player_count()
 
-    s.init_unicodecsv()
     # s.get_reviews_for_appid('730', 0, 'funny')
     s.get_reviews_for_all_games(type='funny')
-
-
-
-
 
 # http://store.steampowered.com//appreviews/570?start_offset=5&day_range=180&filter=all&language=english
 # http://store.steampowered.com//appreviews/570?start_offset=0&day_range=180&filter=funny&language=english

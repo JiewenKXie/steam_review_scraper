@@ -51,14 +51,16 @@ class scraper():
         header = ['appid','game_name','id','type','text']
         self.csv_unicode_writer.writerow(header)
 
-    def get_reviews_for_all_games(self,type=None):
+    def get_reviews_for_all_games(self,type=None,pages=1):
         self.get_top_games_by_player_count()
         if type is None:
             type = 'all'
         count = 1
         for appid in sorted(self.game_name_for_appid,key=int):
-            print count, appid, self.game_name_for_appid[appid]
-            self.get_reviews_for_appid(appid, offset=0, type=type)
+            for page in range(pages):
+                print count, page, appid, self.game_name_for_appid[appid]
+                offset = page * 20
+                self.get_reviews_for_appid(appid, offset=offset, type=type)
             count = count + 1
 
 if __name__ == "__main__":
@@ -66,7 +68,7 @@ if __name__ == "__main__":
     # s.get_top_games_by_player_count()
 
     # s.get_reviews_for_appid('730', 0, 'funny')
-    s.get_reviews_for_all_games(type='funny')
+    s.get_reviews_for_all_games(type='funny',pages=5)
 
 # http://store.steampowered.com//appreviews/570?start_offset=5&day_range=180&filter=all&language=english
 # http://store.steampowered.com//appreviews/570?start_offset=0&day_range=180&filter=funny&language=english

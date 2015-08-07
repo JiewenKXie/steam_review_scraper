@@ -19,15 +19,28 @@ class scraper():
             m = re.search('app/(\d+)/',url)
             if m:
                 self.game_name_for_appid[m.group(1)] = game_name
+        for item in self.game_name_for_appid:
+            print item, self.game_name_for_appid[item]
 
-
+    def get_reviews_for_appid(self,appid=None,offset=0,type=None):
+        if type is None:
+            type = 'all'
+        if appid is None:
+            return
+        url = 'http://store.steampowered.com/appreviews/%s?start_offset=%i&day_range=180&filter=%s&language=english' % (appid,offset,type)
+        print url
+        r = requests.get(url)
+        json = r.json()
+        if json.get('success') == 1:
+            print json
 
 if __name__ == "__main__":
     s = scraper()
-    s.get_top_games_by_player_count()
+    # s.get_top_games_by_player_count()
 
-    for item in s.game_name_for_appid:
-        print item, s.game_name_for_appid[item]
+    s.get_reviews_for_appid('730', 0)
+
+
 
 
 # http://store.steampowered.com//appreviews/570?start_offset=5&day_range=180&filter=all&language=english

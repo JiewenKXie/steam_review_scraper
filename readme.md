@@ -1,7 +1,7 @@
 steam review scraper
 
-get 100 most popular steam game
+get 100 most popular steam games
 
-get ~10? reviews for each game
+get 20 reviews for each game
 
-put them into a db?
+output to csv

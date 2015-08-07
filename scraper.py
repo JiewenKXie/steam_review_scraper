@@ -21,8 +21,8 @@ class scraper():
             m = re.search('app/(\d+)/',url)
             if m:
                 self.game_name_for_appid[m.group(1)] = game_name
-        for item in self.game_name_for_appid:
-            print item, self.game_name_for_appid[item]
+        # for item in self.game_name_for_appid:
+        #     print item, self.game_name_for_appid[item]
 
     def get_reviews_for_appid(self,appid=None,offset=0,type=None):
         if type is None:
@@ -35,7 +35,7 @@ class scraper():
         json = r.json()
         if json.get('success') == 1:
             # print json
-            print json['recommendationids']
+            # print json['recommendationids']
             html = json['html']
             soup = BeautifulSoup(html, "lxml")
             # print soup.text.encode('utf-8')
@@ -44,7 +44,7 @@ class scraper():
             index = 0
             for item in content:
                 review_text = item.get_text(strip=True).replace('\n','|')
-                print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
+                # print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
                 row = [appid, self.game_name_for_appid[appid], \
                        json['recommendationids'][index], type, review_text ]
                 self.csv_unicode_writer.writerow(row)
@@ -59,13 +59,22 @@ class scraper():
         header = ['appid','game_name','id','type','text']
         self.csv_unicode_writer.writerow(header)
 
+    def get_reviews_for_all_games(self,type=None):
+        if type is None:
+            type = 'all'
+        count = 1
+        for appid in sorted(self.game_name_for_appid,key=int):
+            print count, appid, self.game_name_for_appid[appid]
+            self.get_reviews_for_appid(appid, offset=0, type=type)
+            count = count + 1
 
 if __name__ == "__main__":
     s = scraper()
     s.get_top_games_by_player_count()
-    
+
     s.init_unicodecsv()
-    s.get_reviews_for_appid('730', 0, 'funny')
+    # s.get_reviews_for_appid('730', 0, 'funny')
+    s.get_reviews_for_all_games(type='funny')
 
 
 

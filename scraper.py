@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 import re
+import codecs
+import unicodecsv
 
 class scraper():
     def __init__(self):
@@ -43,13 +45,26 @@ class scraper():
             for item in content:
                 review_text = item.get_text(strip=True).replace('\n','|')
                 print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
+                row = [appid, self.game_name_for_appid[appid], \
+                       json['recommendationids'][index], type, review_text ]
+                self.csv_unicode_writer.writerow(row)
                 index = index + 1
+
+    def init_unicodecsv(self,filename=None):
+        if filename is None:
+            filename = 'steam_reviews.csv'
+        self.csv_fh = codecs.open(filename, 'wb')
+        self.csv_fh.write(u'\uFEFF'.encode('utf8'))
+        self.csv_unicode_writer = unicodecsv.writer(self.csv_fh, encoding='utf-8')
+        header = ['appid','game_name','id','type','text']
+        self.csv_unicode_writer.writerow(header)
 
 
 if __name__ == "__main__":
     s = scraper()
-    # s.get_top_games_by_player_count()
-
+    s.get_top_games_by_player_count()
+    
+    s.init_unicodecsv()
     s.get_reviews_for_appid('730', 0, 'funny')
 
 

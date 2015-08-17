@@ -30,17 +30,18 @@ class scraper():
         r = requests.get(url)
         json = r.json()
         if json.get('success') == 1:
+            # print json['html'].encode('utf-8')
             soup = BeautifulSoup(json['html'], "lxml")
-            content = soup.find_all('div',class_="content")
-
+            review_box = soup.find_all('div',class_="review_box")
             index = 0
-            for item in content:
-                review_text = item.get_text(strip=True).replace('\n','|')
+            for review in review_box:
+                review_text = review.find('div',class_="content").get_text(strip=True).replace('\n','|')
                 # print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
-                row = [appid, self.game_name_for_appid[appid], \
-                       json['recommendationids'][index], type, review_text ]
+                # print review_text.encode('utf-8')
+                row = [appid, self.game_name_for_appid[appid], json['recommendationids'][index], type, review_text ]
                 self.csv_unicode_writer.writerow(row)
                 index = index + 1
+            quit()
 
     def init_unicodecsv(self,filename=None):
         if filename is None:
@@ -68,7 +69,8 @@ if __name__ == "__main__":
     # s.get_top_games_by_player_count()
 
     # s.get_reviews_for_appid('730', 0, 'funny')
-    s.get_reviews_for_all_games(type='funny',pages=5)
+    # s.get_reviews_for_all_games(type='funny',pages=5)
+    s.get_reviews_for_all_games(pages=5)
 
 # http://store.steampowered.com//appreviews/570?start_offset=5&day_range=180&filter=all&language=english
 # http://store.steampowered.com//appreviews/570?start_offset=0&day_range=180&filter=funny&language=english

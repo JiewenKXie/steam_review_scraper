@@ -42,7 +42,6 @@ class scraper():
                 row = [appid, self.game_name_for_appid.get(appid), json['recommendationids'][index], type, persona_name, review_text ]
                 self.csv_unicode_writer.writerow(row)
                 index = index + 1
-            # quit()
 
     def init_unicodecsv(self,filename=None):
         if filename is None:
@@ -69,8 +68,8 @@ if __name__ == "__main__":
     s = scraper()
     # s.get_top_games_by_player_count()
 
-    s.get_reviews_for_appid('730', 0, 'funny')
-    # s.get_reviews_for_all_games(type='funny',pages=5)
+    # s.get_reviews_for_appid('730', 0, 'funny')
+    s.get_reviews_for_all_games(type='funny',pages=5)
     # s.get_reviews_for_all_games(pages=5)
 
 # http://store.steampowered.com//appreviews/570?start_offset=5&day_range=180&filter=all&language=english

@@ -14,7 +14,7 @@ This script gets reviews for the current top 100 steam games shown on the store 
 
 type = ['all' (Helpful),'positive','negative','funny','recent']
 
-reviews = pages * 20
+num. reviews = pages * 20
 
 output is sorted by appid ascending.
 

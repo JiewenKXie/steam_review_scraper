@@ -49,10 +49,11 @@ class scraper():
         self.csv_fh = codecs.open(filename, 'wb')
         self.csv_fh.write(u'\uFEFF'.encode('utf8'))
         self.csv_unicode_writer = unicodecsv.writer(self.csv_fh, encoding='utf-8')
-        header = ['appid','id','type','username','text']
+        header = ['app_id','review_id','type','username','review_text']
         self.csv_unicode_writer.writerow(header)
 
     def get_all_reviews_for_appid(self,app_id,type):
+        s.init_unicodecsv('reviews_' + app_id + '.csv')
         self.get_reviews_for_appid(app_id, type, 0)
         self.get_reviews_for_appid(app_id, type, 5)
         offset = 25
@@ -61,5 +62,5 @@ class scraper():
 
 if __name__ == "__main__":
     s = scraper()
-    s.init_unicodecsv()
+    
     s.get_all_reviews_for_appid('427820', type='all')

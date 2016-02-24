@@ -3,13 +3,19 @@ from bs4 import BeautifulSoup
 import re
 import codecs
 import unicodecsv
+import sys
 
 class scraper():
     def __init__(self):
         self.day_range = '9223372036854776000'
         self.language = 'english'
 
+        if len(sys.argv) > 1:
+            self.config_name = sys.argv[1]
+
         self.recommendation_ids = []
+
+        self.max_reviews = 1000
 
     def get_reviews_for_appid(self,app_id=None,type=None,offset=0):
         if type is None:
@@ -41,6 +47,8 @@ class scraper():
                 row = [app_id, json['recommendationids'][index], type, persona_name, review_text ]
                 self.csv_unicode_writer.writerow(row)
             print len(self.recommendation_ids)
+            if len(self.recommendation_ids) > self.max_reviews:
+                return False
             return has_new_data
 
     def init_unicodecsv(self,filename=None):

@@ -11,29 +11,39 @@ class scraper():
         self.day_range = 180
         self.language = 'english'
 
+        self.recommendation_ids = []
+
     def get_reviews_for_appid(self,app_id=None,type=None,offset=0):
         if type is None:
             type = 'all'
 
         url = 'http://store.steampowered.com//appreviews/{0}?start_offset={1}&day_range={2}&filter={3}&language={4}'
-        r = requests.get(url.format(app_id,offset,self.day_range,type,self.language))
+        url = url.format(app_id,offset,self.day_range,type,self.language)
+        print url
+        r = requests.get(url)
         json = r.json()
         if json.get('success') == 1:
             # print json['html'].encode('utf-8')
             soup = BeautifulSoup(json['html'], "lxml")
             review_box = soup.find_all('div',class_="review_box")
-            index = 0
+            index = -1
+            has_new_data = False
             for review in review_box:
+                index += 1
                 review_text = review.find('div',class_="content").get_text(strip=True).replace('\n','|')
-                print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
+                # print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
                 # print review_text.encode('utf-8')
+                recommendation_id = json['recommendationids'][index]
+                print recommendation_id
+                if recommendation_id in self.recommendation_ids:
+                    continue
+                else:
+                    has_new_data = True
+                    self.recommendation_ids.append(recommendation_id)
                 persona_name = review.find('div',class_="persona_name").get_text(strip=True).replace("\n",'|')
                 row = [app_id, self.game_name_for_appid.get(app_id), json['recommendationids'][index], type, persona_name, review_text ]
                 self.csv_unicode_writer.writerow(row)
-                index = index + 1
-            return True
-        else:
-            return False
+            return has_new_data
 
     def init_unicodecsv(self,filename=None):
         if filename is None:
@@ -68,7 +78,12 @@ class scraper():
             if m:
                 self.game_name_for_appid[m.group(1)] = game_name
 
+    def get_all_reviews_for_appid(self,app_id,type):
+        offset = 0
+        while self.get_reviews_for_appid(app_id, type, offset):
+            offset += 25
+
 if __name__ == "__main__":
     s = scraper()
 
-    s.get_reviews_for_appid('427820', type='all')
+    s.get_all_reviews_for_appid('427820', type='all')

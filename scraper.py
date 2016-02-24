@@ -11,6 +11,7 @@ class scraper():
         self.language = 'english'
         self.recommendation_ids = []
         self.max_reviews = 1000
+        self.csv_unicode_writer = None
 
         if len(sys.argv) > 1:
             self.get_all_reviews_for_appid(sys.argv[1])
@@ -47,6 +48,8 @@ class scraper():
                     return False
                 persona_name = review.find('div',class_="persona_name").get_text(strip=True).replace("\n",'|')
                 row = [app_id, json['recommendationids'][index], type, persona_name, review_text ]
+                if self.csv_unicode_writer is None:
+                    self.init_unicodecsv('reviews_' + app_id + '.csv')
                 self.csv_unicode_writer.writerow(row)
             print len(self.recommendation_ids)
             return has_new_data
@@ -64,7 +67,6 @@ class scraper():
         self.csv_unicode_writer.writerow(header)
 
     def get_all_reviews_for_appid(self,app_id=None,type=None):
-        self.init_unicodecsv('reviews_' + app_id + '.csv')
         self.get_reviews_for_appid(app_id, type, 0)
         self.get_reviews_for_appid(app_id, type, 5)
         offset = 25

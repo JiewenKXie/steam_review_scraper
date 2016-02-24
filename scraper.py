@@ -50,6 +50,9 @@ class scraper():
                 self.csv_unicode_writer.writerow(row)
             print len(self.recommendation_ids)
             return has_new_data
+        else:
+            raise Exception("error, invalid json response")
+            
 
     def init_unicodecsv(self,filename=None):
         if filename is None:

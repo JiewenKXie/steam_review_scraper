@@ -8,6 +8,8 @@ class scraper():
     def __init__(self):
         self.game_name_for_appid = {}
         self.init_unicodecsv()
+        self.day_range = 180
+        self.language = 'english'
 
     def get_top_games_by_player_count(self):
         url = 'http://store.steampowered.com/stats/'
@@ -21,13 +23,12 @@ class scraper():
             if m:
                 self.game_name_for_appid[m.group(1)] = game_name
 
-    def get_reviews_for_appid(self,appid=None,offset=0,type=None):
+    def get_reviews_for_appid(self,app_id=None,offset=0,type=None):
         if type is None:
             type = 'all'
-        if appid is None:
-            return
-        url = 'http://store.steampowered.com/appreviews/%s?start_offset=%i&day_range=180&filter=%s&language=english' % (appid,offset,type)
-        r = requests.get(url)
+
+        url = 'http://store.steampowered.com//appreviews/{0}?start_offset={1}&day_range={2}&filter={3}&language={4}'
+        r = requests.get(url.format(app_id,offset,self.day_range,type,self.language))
         json = r.json()
         if json.get('success') == 1:
             # print json['html'].encode('utf-8')
@@ -36,12 +37,15 @@ class scraper():
             index = 0
             for review in review_box:
                 review_text = review.find('div',class_="content").get_text(strip=True).replace('\n','|')
-                # print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
+                print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
                 # print review_text.encode('utf-8')
                 persona_name = review.find('div',class_="persona_name").get_text(strip=True).replace("\n",'|')
-                row = [appid, self.game_name_for_appid.get(appid), json['recommendationids'][index], type, persona_name, review_text ]
+                row = [app_id, self.game_name_for_appid.get(app_id), json['recommendationids'][index], type, persona_name, review_text ]
                 self.csv_unicode_writer.writerow(row)
                 index = index + 1
+            return True
+        else:
+            return False
 
     def init_unicodecsv(self,filename=None):
         if filename is None:
@@ -68,9 +72,5 @@ if __name__ == "__main__":
     s = scraper()
     # s.get_top_games_by_player_count()
 
-    # s.get_reviews_for_appid('730', 0, 'funny')
-    s.get_reviews_for_all_games(type='funny',pages=5)
-    # s.get_reviews_for_all_games(pages=5)
-
-# http://store.steampowered.com//appreviews/570?start_offset=5&day_range=180&filter=all&language=english
-# http://store.steampowered.com//appreviews/570?start_offset=0&day_range=180&filter=funny&language=english
+    # s.get_reviews_for_appid('730', offset=0, 'funny')
+    s.get_reviews_for_appid('427820', offset=0, type='all')

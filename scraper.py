@@ -9,13 +9,13 @@ class scraper():
     def __init__(self):
         self.day_range = '9223372036854776000'
         self.language = 'english'
+        self.recommendation_ids = []
+        self.max_reviews = 1000
 
         if len(sys.argv) > 1:
-            self.config_name = sys.argv[1]
-
-        self.recommendation_ids = []
-
-        self.max_reviews = 1000
+            self.get_all_reviews_for_appid(sys.argv[1])
+        else:
+            print "usage scraper.py app_id"
 
     def get_reviews_for_appid(self,app_id=None,type=None,offset=0):
         if type is None:
@@ -60,8 +60,8 @@ class scraper():
         header = ['app_id','review_id','type','username','review_text']
         self.csv_unicode_writer.writerow(header)
 
-    def get_all_reviews_for_appid(self,app_id,type):
-        s.init_unicodecsv('reviews_' + app_id + '.csv')
+    def get_all_reviews_for_appid(self,app_id=None,type=None):
+        self.init_unicodecsv('reviews_' + app_id + '.csv')
         self.get_reviews_for_appid(app_id, type, 0)
         self.get_reviews_for_appid(app_id, type, 5)
         offset = 25
@@ -71,4 +71,4 @@ class scraper():
 if __name__ == "__main__":
     s = scraper()
     
-    s.get_all_reviews_for_appid('427820', type='all')
+    # s.get_all_reviews_for_appid('427820', type='all')

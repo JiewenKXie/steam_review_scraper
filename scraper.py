@@ -43,12 +43,12 @@ class scraper():
                 else:
                     has_new_data = True
                     self.recommendation_ids.append(recommendation_id)
+                if len(self.recommendation_ids) > self.max_reviews:
+                    return False
                 persona_name = review.find('div',class_="persona_name").get_text(strip=True).replace("\n",'|')
                 row = [app_id, json['recommendationids'][index], type, persona_name, review_text ]
                 self.csv_unicode_writer.writerow(row)
             print len(self.recommendation_ids)
-            if len(self.recommendation_ids) > self.max_reviews:
-                return False
             return has_new_data
 
     def init_unicodecsv(self,filename=None):

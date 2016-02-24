@@ -6,7 +6,7 @@ Python 2.7+
 
     pip install requests beautifulsoup4 unicodecsv
 
-    lxml (Windows)[www.lfd.uci.edu/~gohlke/pythonlibs/#lxml], (other os)[http://lxml.de/installation.html]
+    lxml [Windows](www.lfd.uci.edu/~gohlke/pythonlibs/#lxml), [other os](http://lxml.de/installation.html)
 
 ## Usage
 

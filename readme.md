@@ -1,6 +1,6 @@
-Steam review scraper
+# Steam review scraper
 
-# Usage
+## Usage
 
     python scraper.py app_id
 

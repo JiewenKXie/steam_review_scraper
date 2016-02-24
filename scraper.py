@@ -8,7 +8,7 @@ class scraper():
     def __init__(self):
         self.game_name_for_appid = {}
         self.init_unicodecsv()
-        self.day_range = 180
+        self.day_range = '9223372036854776000'
         self.language = 'english'
 
         self.recommendation_ids = []
@@ -34,7 +34,6 @@ class scraper():
                 # print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
                 # print review_text.encode('utf-8')
                 recommendation_id = json['recommendationids'][index]
-                print recommendation_id
                 if recommendation_id in self.recommendation_ids:
                     continue
                 else:
@@ -43,6 +42,7 @@ class scraper():
                 persona_name = review.find('div',class_="persona_name").get_text(strip=True).replace("\n",'|')
                 row = [app_id, self.game_name_for_appid.get(app_id), json['recommendationids'][index], type, persona_name, review_text ]
                 self.csv_unicode_writer.writerow(row)
+            print len(self.recommendation_ids)
             return has_new_data
 
     def init_unicodecsv(self,filename=None):
@@ -79,9 +79,11 @@ class scraper():
                 self.game_name_for_appid[m.group(1)] = game_name
 
     def get_all_reviews_for_appid(self,app_id,type):
-        offset = 0
+        self.get_reviews_for_appid(app_id, type, 0)
+        self.get_reviews_for_appid(app_id, type, 5)
+        offset = 25
         while self.get_reviews_for_appid(app_id, type, offset):
-            offset += 25
+            offset += 20
 
 if __name__ == "__main__":
     s = scraper()

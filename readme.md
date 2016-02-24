@@ -12,7 +12,7 @@
 
 ## Method
 
-    s.get_all_reviews_for_appid('427820', type='all')
+    s.get_all_reviews_for_appid(app_id='427820', type='all')
 
 where type is one of the following:
 

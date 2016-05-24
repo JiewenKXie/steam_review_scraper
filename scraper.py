@@ -35,8 +35,6 @@ class scraper():
             for review in review_box:
                 index += 1
                 review_text = review.find('div',class_="content").get_text(strip=True).replace('\n','|')
-                # print json['recommendationids'][index], review_text.encode('utf-8') + "\n"
-                # print review_text.encode('utf-8')
                 recommendation_id = json['recommendationids'][index]
                 if recommendation_id in self.recommendation_ids:
                     continue
@@ -46,7 +44,8 @@ class scraper():
                 if len(self.recommendation_ids) > self.max_reviews:
                     return False
                 persona_name = review.find('div',class_="persona_name").get_text(strip=True).replace("\n",'|')
-                row = [app_id, json['recommendationids'][index], type, persona_name, review_text ]
+                posted_date = review.find('div',class_="postedDate").get_text(strip=True)
+                row = [app_id, json['recommendationids'][index], posted_date, type, persona_name, review_text ]
                 if self.csv_unicode_writer is None:
                     self.init_unicodecsv('reviews_' + app_id + '.csv')
                 self.csv_unicode_writer.writerow(row)
@@ -62,7 +61,7 @@ class scraper():
         self.csv_fh = codecs.open(filename, 'wb')
         self.csv_fh.write(u'\uFEFF'.encode('utf8'))
         self.csv_unicode_writer = unicodecsv.writer(self.csv_fh, encoding='utf-8')
-        header = ['app_id','review_id','type','username','review_text']
+        header = ['app_id','review_id','date','type','username','review_text']
         self.csv_unicode_writer.writerow(header)
 
     def get_all_reviews_for_appid(self,app_id=None,type=None):
